@@ -1,0 +1,26 @@
+server:
+  port: 8081
+hm:
+  swagger:
+    title: 用户服务接口文档
+    package: com.hhai.user.controller
+  db:
+    database: user_db
+    host: 115.190.110.122 # 修改为你自己的虚拟机IP地址
+    pw: 200452 # 修改为docker中的MySQL密码
+  jwt:
+    location: classpath:hmall.jks
+    alias: hmall
+    password: hmall123
+    tokenTTL: 30m
+#  auth:
+#    excludePaths:
+#      - /search/**
+#      - /users/login
+#      - /hi
+#feign:
+#  okhttp:
+#    enabled: true # 开启OKHttp连接池支持
+#  sentinel:
+#    enabled: true # 开启Feign对Sentinel的整合
+

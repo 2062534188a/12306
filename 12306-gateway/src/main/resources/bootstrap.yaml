@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: gateway-service
+  profiles:
+    active: dev
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=user-info, RETAIN_UNIQUE
+        # 允许所有头传递（防止敏感头被过滤）
+      httpclient:
+        wiretap: true # 调试模式，查看请求头
+    nacos:
+      server-addr: 115.190.110.122
+      config:
+        file-extension: yaml
+        shared-configs:
