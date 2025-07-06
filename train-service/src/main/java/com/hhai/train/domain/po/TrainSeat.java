@@ -37,14 +37,17 @@ public class TrainSeat implements Serializable {
     @ApiModelProperty(value = "关联车次ID")
     private Long trainId;
 
+    @ApiModelProperty(value = "分站点ID")
+    private Long branch_station_id;
+
     @ApiModelProperty(value = "席别(商务座 0/一等座 1/二等座 2/无座 3)")
     private Integer seatType;
 
     @ApiModelProperty(value = "总座位数")
     private Integer totalCount;
 
-    @ApiModelProperty(value = "余座位数")
-    private Integer residueCount;
+    @ApiModelProperty(value = "到下一站点区间余座数")
+    private Integer to_next_station_residue_count;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

@@ -38,13 +38,14 @@ CREATE TABLE `train_station` (
 
 CREATE TABLE `train_seat` (
       `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '席别ID',
+      `branch_station_id` BIGINT  COMMENT '分站点ID',
       `train_id` BIGINT NOT NULL COMMENT '关联车次ID',
       `seat_type` INT NOT NULL COMMENT '席别(特等座(商务座) 0/一等座 1/二等座 2/无座3)',
+      `to_next_station_residue_count` INT COMMENT '到下一站点区间余座数',
       `total_count` INT NOT NULL COMMENT '总座位数',
-      `residue_count` INT NOT NULL COMMENT '余座位数',
       `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-      UNIQUE KEY `uniq_train_seat` (`train_id`, `seat_type`)
+      INDEX `idx_branch_station` (`branch_station_id`)
 );
 
 -- 1. 先清空表（如果已有数据）
@@ -123,26 +124,63 @@ INSERT INTO `train_station` (`station_id`, `train_id`, `station_name`, `arrival_
 -- 5. 插入座位数据（保持不变）
 -- G101 车次座位
 SET @train_id = (SELECT id FROM train WHERE train_number = 'G101');
-INSERT INTO `train_seat` (`train_id`, `seat_type`, `total_count`, `residue_count`) VALUES
-(@train_id, 0, 20, 20),
-(@train_id, 1, 100, 100),
-(@train_id, 2, 300, 300),
-(@train_id, 3, 50, 50);
+INSERT INTO `train_seat` (`branch_station_id`,`train_id`, `seat_type`, `total_count`, `to_next_station_residue_count`) VALUES
+(1,@train_id, 0, 20, 20),
+(1,@train_id, 1, 100, 100),
+(1,@train_id, 2, 300, 300),
+(1,@train_id, 3, 50, 50),
+(2,@train_id, 0, 20, 20),
+(2,@train_id, 1, 100, 100),
+(2,@train_id, 2, 300, 300),
+(2,@train_id, 3, 50, 50),
+(3,@train_id, 0, 20, 20),
+(3,@train_id, 1, 100, 100),
+(3,@train_id, 2, 300, 300),
+(3,@train_id, 3, 50, 50),
+(4,@train_id, 0, 20, 20),
+(4,@train_id, 1, 100, 100),
+(4,@train_id, 2, 300, 300),
+(4,@train_id, 3, 50, 50);
+
 
 -- G102 车次座位
 SET @train_id = (SELECT id FROM train WHERE train_number = 'G102');
-INSERT INTO `train_seat` (`train_id`, `seat_type`, `total_count`, `residue_count`) VALUES
-(@train_id, 0, 20, 20),
-(@train_id, 1, 100, 100),
-(@train_id, 2, 300, 300),
-(@train_id, 3, 50, 50);
+INSERT INTO `train_seat` (`branch_station_id`,`train_id`, `seat_type`, `total_count`, `to_next_station_residue_count`) VALUES
+(1,@train_id, 0, 20, 20),
+(1,@train_id, 1, 100, 100),
+(1,@train_id, 2, 300, 300),
+(1,@train_id, 3, 50, 50),
+(2,@train_id, 0, 20, 20),
+(2,@train_id, 1, 100, 100),
+(2,@train_id, 2, 300, 300),
+(2,@train_id, 3, 50, 50),
+(3,@train_id, 0, 20, 20),
+(3,@train_id, 1, 100, 100),
+(3,@train_id, 2, 300, 300),
+(3,@train_id, 3, 50, 50),
+(4,@train_id, 0, 20, 20),
+(4,@train_id, 1, 100, 100),
+(4,@train_id, 2, 300, 300),
+(4,@train_id, 3, 50, 50);
 
 -- D301 车次座位
 SET @train_id = (SELECT id FROM train WHERE train_number = 'D301');
-INSERT INTO `train_seat` (`train_id`, `seat_type`, `total_count`, `residue_count`) VALUES
-(@train_id, 0, 20, 20),
-(@train_id, 1, 100, 100),
-(@train_id, 2, 300, 300),
-(@train_id, 3, 50, 50);
+INSERT INTO `train_seat` (`branch_station_id`,`train_id`, `seat_type`, `total_count`, `to_next_station_residue_count`) VALUES
+(1,@train_id, 0, 20, 20),
+(1,@train_id, 1, 100, 100),
+(1,@train_id, 2, 300, 300),
+(1,@train_id, 3, 50, 50),
+(2,@train_id, 0, 20, 20),
+(2,@train_id, 1, 100, 100),
+(2,@train_id, 2, 300, 300),
+(2,@train_id, 3, 50, 50),
+(3,@train_id, 0, 20, 20),
+(3,@train_id, 1, 100, 100),
+(3,@train_id, 2, 300, 300),
+(3,@train_id, 3, 50, 50),
+(4,@train_id, 0, 20, 20),
+(4,@train_id, 1, 100, 100),
+(4,@train_id, 2, 300, 300),
+(4,@train_id, 3, 50, 50);
 
 -- 其他车次座位数据类似...

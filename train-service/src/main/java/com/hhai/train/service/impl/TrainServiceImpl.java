@@ -72,7 +72,9 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
 
         for (Map<String, Object> trainsByStation : list) {
             //当前为出发站点
-            if ( trainTicketDTO.getStartStationId()==Long.parseLong(trainsByStation.get("station_id").toString())) {
+            long stationId = Long.parseLong(trainsByStation.get("station_id").toString());
+
+            if ( trainTicketDTO.getStartStationId()== stationId) {
                 //初始化配置
                 trainTicketVO=new TrainTicketVO();
                 price=0;
@@ -90,21 +92,25 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
                 //2.4 起始站名称
                 trainTicketVO.setStartStation(trainsByStation.get("station_name").toString());
 
-                List<TrainSeat> lists = trainSeatService.lambdaQuery().eq(TrainSeat::getTrainId, trainTicketVO.getTrainId()).list();
-                //2.8 座位余量
+                //2.8 TODO 座位余量
+                List<TrainSeat> lists = trainSeatService.lambdaQuery().eq(TrainSeat::getBranch_station_id, stationId).list();
                 for (TrainSeat trainSeat : lists) {
-                    switch (trainSeat.getSeatType()){
-                        case 0:
-                            trainTicketVO.setBusinessClassSeats(trainSeat.getResidueCount());
-                            break;
-                        case 1:trainTicketVO.setFirstClassSeats(trainSeat.getResidueCount());
-                            break;
-                        case 2:trainTicketVO.setSecondClassSeats(trainSeat.getResidueCount());
-                            break;
-                        case 3:trainTicketVO.setNoSeatTickets(trainSeat.getResidueCount());
-                            break;
-                    }
+                    System.out.println(trainSeat+"===========");
                 }
+
+//                for (TrainSeat trainSeat : lists) {
+//                    switch (trainSeat.getSeatType()){
+//                        case 0:
+//                            trainTicketVO.setBusinessClassSeats(trainSeat.getResidueCount());
+//                            break;
+//                        case 1:trainTicketVO.setFirstClassSeats(trainSeat.getResidueCount());
+//                            break;
+//                        case 2:trainTicketVO.setSecondClassSeats(trainSeat.getResidueCount());
+//                            break;
+//                        case 3:trainTicketVO.setNoSeatTickets(trainSeat.getResidueCount());
+//                            break;
+//                    }
+//                }
 
                 //2.9 发车时间
                 trainTicketVO.setDepartureTime(LocalDateTime.parse(
