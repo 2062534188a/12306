@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public interface TrainStationMapper extends BaseMapper<TrainStation> {
     // 在 TrainMapper.xml 中定义：
-    @Select("SELECT t.id,t.train_number,ts.station_state,ts.departure_time,ts.arrival_time,ts.station_id,ts.to_next_station_price,ts.station_order,ts.station_name FROM train t" +
+    @Select("SELECT t.id,t.train_number,ts.id as branch_station_id,ts.station_state,ts.departure_time,ts.arrival_time,ts.station_id,ts.to_next_station_price,ts.station_order,ts.station_name FROM train t" +
             " JOIN train_station ts ON t.id = ts.train_id" +
             " WHERE t.id IN (SELECT train_id FROM train_station WHERE station_id = #{startId} INTERSECT SELECT train_id FROM train_station WHERE station_id = #{endId})" +
             "AND ts.departure_time > #{departureDate} AND ts.departure_time < #{endDate} "

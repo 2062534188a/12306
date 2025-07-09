@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -38,7 +37,7 @@ public class TrainSeat implements Serializable {
     private Long trainId;
 
     @ApiModelProperty(value = "分站点ID")
-    private Long branch_station_id;
+    private Long branchStationId;
 
     @ApiModelProperty(value = "席别(商务座 0/一等座 1/二等座 2/无座 3)")
     private Integer seatType;
@@ -47,7 +46,7 @@ public class TrainSeat implements Serializable {
     private Integer totalCount;
 
     @ApiModelProperty(value = "到下一站点区间余座数")
-    private Integer to_next_station_residue_count;
+    private Integer toNextStationResidueCount;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

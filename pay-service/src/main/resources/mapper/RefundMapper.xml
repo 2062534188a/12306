@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hhai.ticket.mapper.InventoryLogMapper">
+<mapper namespace="com.hhai.pay.mapper.RefundMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.hhai.ticket.domain.po.InventoryLog">
+    <resultMap id="BaseResultMap" type="com.hhai.pay.domain.po.Refund">
         <id column="id" property="id" />
-        <result column="train_id" property="trainId" />
-        <result column="seat_type" property="seatType" />
-        <result column="change_count" property="changeCount" />
-        <result column="biz_type" property="bizType" />
+        <result column="payment_id" property="paymentId" />
+        <result column="refund_amount" property="refundAmount" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>

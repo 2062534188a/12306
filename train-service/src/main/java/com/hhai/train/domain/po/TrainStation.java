@@ -36,7 +36,7 @@ public class TrainStation implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "主站点ID")
-    private Long station_id;
+    private Long stationId;
 
     @ApiModelProperty(value = "关联车次ID")
     private Long trainId;
@@ -54,7 +54,7 @@ public class TrainStation implements Serializable {
     private Integer stationOrder;
 
     @ApiModelProperty(value = "到下一站点区间价格")
-    private BigDecimal to_next_station_price;
+    private BigDecimal toNextStationPrice;
 
     @ApiModelProperty(value = "起始站点 0/终点站 1")
     private Integer stationState;

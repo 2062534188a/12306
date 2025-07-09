@@ -8,10 +8,6 @@ USE `order_db`;
 CREATE TABLE `order` (
      `id` VARCHAR(30) PRIMARY KEY COMMENT '订单号(业务生成)',
      `user_id` BIGINT NOT NULL COMMENT '用户ID',
-     `train_id` BIGINT NOT NULL COMMENT '车次ID',
-     `from_station_id` BIGINT NOT NULL COMMENT '出发站ID',
-     `to_station_id` BIGINT NOT NULL COMMENT '到达站ID',
-     `seat_type` INT NOT NULL COMMENT '席别',
      `amount` DECIMAL(10,2) NOT NULL COMMENT '总金额',
      `status` TINYINT NOT NULL COMMENT '状态(0待支付/1已支付/2已取消)',
      `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

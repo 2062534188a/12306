@@ -1,26 +1,23 @@
 package com.hhai.train.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hhai.common.utils.Result;
 import com.hhai.train.domain.dto.TrainTicketDTO;
 import com.hhai.train.domain.po.Train;
 import com.hhai.train.domain.po.TrainSeat;
-import com.hhai.train.domain.po.TrainStation;
 import com.hhai.train.domain.vo.TrainTicketVO;
 import com.hhai.train.mapper.TrainMapper;
 import com.hhai.train.mapper.TrainStationMapper;
-import com.hhai.train.service.ITrainSeatService;
 import com.hhai.train.service.ITrainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +31,7 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
     private final TrainSeatServiceImpl trainSeatService;
 
     @Override
-    public List<TrainTicketVO> queryTrainTickets(TrainTicketDTO trainTicketDTO) {
+    public Result<List<TrainTicketVO>> queryTrainTickets(TrainTicketDTO trainTicketDTO) {
         //1. 查询对应列车信息
         List<Map<String, Object>> trainsByStations = trainStationMapper.findTrainsByStations(trainTicketDTO.getStartStationId(), trainTicketDTO.getEndStationId(),trainTicketDTO.getDepartureDate(),trainTicketDTO.getDepartureDate().plusDays(1));
         //2. 筛选出两个站点之间的信息
@@ -68,13 +65,11 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
                 errorTrainId = (Long) trainsByStation.get("id");
             }
         }
-        System.out.println(list);
-
+        ArrayList<Long> stationIds = new ArrayList<>();
         for (Map<String, Object> trainsByStation : list) {
+            stationIds.add(Long.parseLong(trainsByStation.get("branch_station_id").toString()));
             //当前为出发站点
-            long stationId = Long.parseLong(trainsByStation.get("station_id").toString());
-
-            if ( trainTicketDTO.getStartStationId()== stationId) {
+            if ( trainTicketDTO.getStartStationId()== Long.parseLong(trainsByStation.get("station_id").toString())) {
                 //初始化配置
                 trainTicketVO=new TrainTicketVO();
                 price=0;
@@ -91,26 +86,6 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
 
                 //2.4 起始站名称
                 trainTicketVO.setStartStation(trainsByStation.get("station_name").toString());
-
-                //2.8 TODO 座位余量
-                List<TrainSeat> lists = trainSeatService.lambdaQuery().eq(TrainSeat::getBranch_station_id, stationId).list();
-                for (TrainSeat trainSeat : lists) {
-                    System.out.println(trainSeat+"===========");
-                }
-
-//                for (TrainSeat trainSeat : lists) {
-//                    switch (trainSeat.getSeatType()){
-//                        case 0:
-//                            trainTicketVO.setBusinessClassSeats(trainSeat.getResidueCount());
-//                            break;
-//                        case 1:trainTicketVO.setFirstClassSeats(trainSeat.getResidueCount());
-//                            break;
-//                        case 2:trainTicketVO.setSecondClassSeats(trainSeat.getResidueCount());
-//                            break;
-//                        case 3:trainTicketVO.setNoSeatTickets(trainSeat.getResidueCount());
-//                            break;
-//                    }
-//                }
 
                 //2.9 发车时间
                 trainTicketVO.setDepartureTime(LocalDateTime.parse(
@@ -138,9 +113,24 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
                 Duration duration = Duration.between(trainTicketVO.getDepartureTime(),trainTicketVO.getArrivalTime());
                 trainTicketVO.setDuration(duration.toHours()+"小时"+duration.toMinutes() % 60+"分钟");
 
+                //保存途径分站点
+                trainTicketVO.setStationIds(new ArrayList<>(stationIds));
+                //2.15 将余票计算出来并保存
+                List<TrainSeat> lists = trainSeatService.lambdaQuery().in(TrainSeat::getBranchStationId, stationIds).eq(TrainSeat::getTrainId,Long.parseLong(trainsByStation.get("id").toString())).list();
+
+                Map<Integer, Integer> SeatMap = new HashMap<>();
+                for (TrainSeat trainSeat : lists) {
+                    SeatMap.merge(trainSeat.getSeatType(), trainSeat.getToNextStationResidueCount(), Math::min);
+                }
+                trainTicketVO.setBusinessClassSeats(SeatMap.get(0));
+                trainTicketVO.setFirstClassSeats(SeatMap.get(1));
+                trainTicketVO.setSecondClassSeats(SeatMap.get(2));
+                trainTicketVO.setNoSeatTickets(SeatMap.get(3));
                 if (price!=0){
                     //保存车票价格
                     trainTicketVO.setPrice(price);
+                    //清空车站id
+                    stationIds.clear();
                     //保存已配置的列车信息
                     trainTicketVOList.add(trainTicketVO);
                     continue;
@@ -150,6 +140,10 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
             price+=Double.parseDouble(trainsByStation.get("to_next_station_price").toString());
         }
 
-        return trainTicketVOList;
+        return Result.success(trainTicketVOList);
     }
+
+
+
+
 }

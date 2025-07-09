@@ -48,6 +48,20 @@ CREATE TABLE `train_seat` (
       INDEX `idx_branch_station` (`branch_station_id`)
 );
 
+CREATE TABLE `train_seat_1` (
+      `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '座位ID',
+      `branch_station_id` BIGINT  COMMENT '分站点ID',
+      `train_id` BIGINT NOT NULL COMMENT '关联车次ID',
+      `seat_type` INT NOT NULL COMMENT '席别(特等座(商务座) 0/一等座 1/二等座 2/无座3)',
+      `carriage_no` NVARCHAR(1) NOT NULL COMMENT '车厢号(商务座1车10个座位/一等座2-3车80个座位) ',
+      `row_no` INT NOT NULL COMMENT '排号',
+      `seat_code` NVARCHAR(1) NOT NULL COMMENT '座位字母',
+      `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+      `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+      INDEX `idx_branch_station` (`branch_station_id`),
+      INDEX `idx_train_id` (`train_id`)
+);
+
 -- 1. 先清空表（如果已有数据）
 TRUNCATE TABLE `train_station`;
 TRUNCATE TABLE `train_station_1`;
@@ -129,19 +143,18 @@ INSERT INTO `train_seat` (`branch_station_id`,`train_id`, `seat_type`, `total_co
 (1,@train_id, 1, 100, 100),
 (1,@train_id, 2, 300, 300),
 (1,@train_id, 3, 50, 50),
-(2,@train_id, 0, 20, 20),
-(2,@train_id, 1, 100, 100),
-(2,@train_id, 2, 300, 300),
-(2,@train_id, 3, 50, 50),
-(3,@train_id, 0, 20, 20),
-(3,@train_id, 1, 100, 100),
-(3,@train_id, 2, 300, 300),
-(3,@train_id, 3, 50, 50),
+(10,@train_id, 0, 20, 20),
+(10,@train_id, 1, 100, 100),
+(10,@train_id, 2, 300, 300),
+(10,@train_id, 3, 50, 50),
+(9,@train_id, 0, 20, 20),
+(9,@train_id, 1, 100, 100),
+(9,@train_id, 2, 300, 300),
+(9,@train_id, 3, 50, 50),
 (4,@train_id, 0, 20, 20),
 (4,@train_id, 1, 100, 100),
 (4,@train_id, 2, 300, 300),
 (4,@train_id, 3, 50, 50);
-
 
 -- G102 车次座位
 SET @train_id = (SELECT id FROM train WHERE train_number = 'G102');
@@ -150,14 +163,14 @@ INSERT INTO `train_seat` (`branch_station_id`,`train_id`, `seat_type`, `total_co
 (1,@train_id, 1, 100, 100),
 (1,@train_id, 2, 300, 300),
 (1,@train_id, 3, 50, 50),
-(2,@train_id, 0, 20, 20),
-(2,@train_id, 1, 100, 100),
-(2,@train_id, 2, 300, 300),
-(2,@train_id, 3, 50, 50),
-(3,@train_id, 0, 20, 20),
-(3,@train_id, 1, 100, 100),
-(3,@train_id, 2, 300, 300),
-(3,@train_id, 3, 50, 50),
+(10,@train_id, 0, 20, 20),
+(10,@train_id, 1, 100, 100),
+(10,@train_id, 2, 300, 300),
+(10,@train_id, 3, 50, 50),
+(9,@train_id, 0, 20, 20),
+(9,@train_id, 1, 100, 100),
+(9,@train_id, 2, 300, 300),
+(9,@train_id, 3, 50, 50),
 (4,@train_id, 0, 20, 20),
 (4,@train_id, 1, 100, 100),
 (4,@train_id, 2, 300, 300),

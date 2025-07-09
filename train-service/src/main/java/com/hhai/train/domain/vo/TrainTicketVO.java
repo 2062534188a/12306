@@ -1,7 +1,11 @@
 package com.hhai.train.domain.vo;
 import lombok.Data;
+
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 列车信息视图对象（包含余票信息）
@@ -52,4 +56,7 @@ public class TrainTicketVO {
 
     // 列车类型 (高铁/动车/普快等)
     private String trainType;
+
+    // 途径站点id
+    private List<Long> stationIds;
 }

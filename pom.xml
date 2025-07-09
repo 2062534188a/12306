@@ -17,6 +17,7 @@
         <module>pay-service</module>
         <module>12306-common</module>
         <module>12306-gateway</module>
+        <module>12306-api</module>
     </modules>
 
     <parent>

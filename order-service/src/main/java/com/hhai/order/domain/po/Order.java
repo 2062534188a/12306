@@ -29,27 +29,12 @@ public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "订单号(业务生成)")
+    @ApiModelProperty(value = "订单号")
     @TableId(value = "id", type = IdType.AUTO)
     private String id;
 
     @ApiModelProperty(value = "用户ID")
     private Long userId;
-
-    @ApiModelProperty(value = "车次ID")
-    private Long trainId;
-
-    @ApiModelProperty(value = "出发站ID")
-    private Long fromStationId;
-
-    @ApiModelProperty(value = "到达站ID")
-    private Long toStationId;
-
-    @ApiModelProperty(value = "席别")
-    private String seatType;
-
-    @ApiModelProperty(value = "购票数量")
-    private Integer seatCount;
 
     @ApiModelProperty(value = "总金额")
     private BigDecimal amount;

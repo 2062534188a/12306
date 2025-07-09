@@ -1,5 +1,8 @@
 package com.hhai.order.controller;
 
+import com.hhai.common.utils.Result;
+import com.hhai.order.domain.dto.OrderFormDTO;
+import com.hhai.order.service.IOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
+
+    private final IOrderService orderService;
     @ApiOperation("创建订单")
     @PostMapping
-    public Long createOrder(@RequestBody OrderFormDTO orderFormDTO){
+    public Result<String> createOrder(@RequestBody OrderFormDTO orderFormDTO){
         return orderService.createOrder(orderFormDTO);
     }
 }
