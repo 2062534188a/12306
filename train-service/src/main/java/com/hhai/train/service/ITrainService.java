@@ -6,13 +6,14 @@ import com.hhai.train.domain.vo.TrainTicketVO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
 
 public interface ITrainService  {
 
-    Result<List<TrainTicketVO>> queryTrainTickets(TrainTicketDTO trainTicketDTO);
+    Result<List<TrainTicketVO>> queryTrainTickets( LocalDate departureDate,Long endStationId,Long startStationId,Integer trainType);
 
 
 }

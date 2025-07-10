@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS `order_db` DEFAULT CHARACTER SET utf8mb4;
 USE `order_db`;
 
 CREATE TABLE `order` (
-     `id` VARCHAR(30) PRIMARY KEY COMMENT '订单号(业务生成)',
+     `id` VARCHAR(50) PRIMARY KEY COMMENT '订单号(业务生成)',
      `user_id` BIGINT NOT NULL COMMENT '用户ID',
      `amount` DECIMAL(10,2) NOT NULL COMMENT '总金额',
      `status` TINYINT NOT NULL COMMENT '状态(0待支付/1已支付/2已取消)',

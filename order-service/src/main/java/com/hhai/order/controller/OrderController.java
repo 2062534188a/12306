@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "订单相关接口")
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
     private final IOrderService orderService;
     @ApiOperation("创建订单")
     @PostMapping
-    public Result<String> createOrder(@RequestBody OrderFormDTO orderFormDTO){
+    public Result<String> order(@RequestBody OrderFormDTO orderFormDTO){
         return orderService.createOrder(orderFormDTO);
     }
 }

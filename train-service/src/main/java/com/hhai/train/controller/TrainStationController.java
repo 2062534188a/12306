@@ -4,6 +4,7 @@ import com.hhai.common.utils.Result;
 import com.hhai.train.service.ITrainSeatService;
 import com.hhai.train.service.ITrainStationService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainStationController {
     private final ITrainStationService trainStationService;
-
-    @GetMapping("/queryTrainTicketPrice")
-    Result<Double> queryTrainTicketPrice(@RequestParam("stationIds") List<Long> stationIds){
+    @ApiOperation("查询车票价格")
+    @GetMapping("/trainTicketPrice")
+    Result<Double> trainTicketPrice(@RequestParam("stationIds") List<Long> stationIds){
         return trainStationService.queryTrainTicketPrice(stationIds);
     }
 }

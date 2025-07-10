@@ -23,14 +23,14 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("order")
+@TableName("`order`")
 @ApiModel(value="Order对象", description="")
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "订单号")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id",type = IdType.INPUT)
     private String id;
 
     @ApiModelProperty(value = "用户ID")

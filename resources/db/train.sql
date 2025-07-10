@@ -47,19 +47,21 @@ CREATE TABLE `train_seat` (
       `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
       INDEX `idx_branch_station` (`branch_station_id`)
 );
-
-CREATE TABLE `train_seat_1` (
+CREATE TABLE `train_seat_information` (
       `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '座位ID',
       `branch_station_id` BIGINT  COMMENT '分站点ID',
+      `seat_id` BIGINT  COMMENT '关联席别ID',
+      `user_id` BIGINT NOT NULL COMMENT '用户ID',
       `train_id` BIGINT NOT NULL COMMENT '关联车次ID',
-      `seat_type` INT NOT NULL COMMENT '席别(特等座(商务座) 0/一等座 1/二等座 2/无座3)',
-      `carriage_no` NVARCHAR(1) NOT NULL COMMENT '车厢号(商务座1车10个座位/一等座2-3车80个座位) ',
+      `seat_type` INT  COMMENT '席别(特等座(商务座) 0/一等座 1/二等座 2/无座3)',
+      `carriage_no` INT COMMENT '车厢号(商务座1车10个座位/一等座2-3车80个座位) ',
       `row_no` INT NOT NULL COMMENT '排号',
       `seat_code` NVARCHAR(1) NOT NULL COMMENT '座位字母',
       `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
       INDEX `idx_branch_station` (`branch_station_id`),
-      INDEX `idx_train_id` (`train_id`)
+      INDEX `idx_train_id` (`train_id`),
+      INDEX `idx_seat_id` (`seat_id`)
 );
 
 -- 1. 先清空表（如果已有数据）

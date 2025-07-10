@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,9 +32,10 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
     private final TrainSeatServiceImpl trainSeatService;
 
     @Override
-    public Result<List<TrainTicketVO>> queryTrainTickets(TrainTicketDTO trainTicketDTO) {
+    public Result<List<TrainTicketVO>> queryTrainTickets(LocalDate departureDate, Long endStationId, Long startStationId, Integer trainType) {
+
         //1. 查询对应列车信息
-        List<Map<String, Object>> trainsByStations = trainStationMapper.findTrainsByStations(trainTicketDTO.getStartStationId(), trainTicketDTO.getEndStationId(),trainTicketDTO.getDepartureDate(),trainTicketDTO.getDepartureDate().plusDays(1));
+        List<Map<String, Object>> trainsByStations = trainStationMapper.findTrainsByStations(startStationId, endStationId,departureDate,departureDate.plusDays(1));
         //2. 筛选出两个站点之间的信息
         TrainTicketVO trainTicketVO=new TrainTicketVO();
 
@@ -48,19 +50,19 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
             if (errorTrainId==(Long) trainsByStation.get("id")){
                 continue;
             }
-            if (lock==1||trainTicketDTO.getStartStationId()==Long.parseLong(trainsByStation.get("station_id").toString())){
+            if (lock==1||startStationId==Long.parseLong(trainsByStation.get("station_id").toString())){
                 //检查到起点 开始存入list中
                 list.add(trainsByStation);
                 //打开存储开关
                 lock=1;
-                if (trainTicketDTO.getEndStationId()==Long.parseLong(trainsByStation.get("station_id").toString())){
+                if (endStationId==Long.parseLong(trainsByStation.get("station_id").toString())){
                     //关闭存储开关
                     lock=0;
                     continue;
                 }
             }
             //如果未检出起点 直接到终点
-            if (trainTicketDTO.getEndStationId()==Long.parseLong(trainsByStation.get("station_id").toString())){
+            if (endStationId==Long.parseLong(trainsByStation.get("station_id").toString())){
                 //记录错误列车id
                 errorTrainId = (Long) trainsByStation.get("id");
             }
@@ -69,7 +71,7 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
         for (Map<String, Object> trainsByStation : list) {
             stationIds.add(Long.parseLong(trainsByStation.get("branch_station_id").toString()));
             //当前为出发站点
-            if ( trainTicketDTO.getStartStationId()== Long.parseLong(trainsByStation.get("station_id").toString())) {
+            if ( startStationId== Long.parseLong(trainsByStation.get("station_id").toString())) {
                 //初始化配置
                 trainTicketVO=new TrainTicketVO();
                 price=0;
@@ -82,7 +84,7 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
                 trainTicketVO.setTrainNumber(trainsByStation.get("train_number").toString());
 
                 //2.3 起始站id
-                trainTicketVO.setStartStationId(trainTicketDTO.getStartStationId());
+                trainTicketVO.setStartStationId(startStationId);
 
                 //2.4 起始站名称
                 trainTicketVO.setStartStation(trainsByStation.get("station_name").toString());
@@ -95,13 +97,13 @@ public class TrainServiceImpl extends ServiceImpl<TrainMapper, Train> implements
 
 
                 //2.10 列车类型 trainType
-                trainTicketVO.setTrainType(String.valueOf(trainTicketDTO.getTrainType()));
+                trainTicketVO.setTrainType(String.valueOf(trainType));
                 continue;
             }
             //为目的站点
-            if (trainTicketDTO.getEndStationId()==Long.parseLong(trainsByStation.get("station_id").toString())) {
+            if (endStationId==Long.parseLong(trainsByStation.get("station_id").toString())) {
                 //2.11 目的站id
-                trainTicketVO.setEndStationId(trainTicketDTO.getEndStationId());
+                trainTicketVO.setEndStationId(endStationId);
                 //2.12 目的站名称
                 trainTicketVO.setEndStation(trainsByStation.get("station_name").toString());
                 //2.13 到达时间

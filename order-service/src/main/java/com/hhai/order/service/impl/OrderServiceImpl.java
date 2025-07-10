@@ -23,16 +23,16 @@ import java.util.HashMap;
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
 
     private final TrainClient trainClient;
-
+    private final OrderMapper orderMapper;
     @Override
     public Result<String> createOrder(OrderFormDTO orderFormDTO) {
         //1. 查询是否余票
-        Result<HashMap<Integer, Integer>> seatMapResult = trainClient.queryTrainResidueTicket(orderFormDTO.getTrainId(), orderFormDTO.getStationIds());
-        if (seatMapResult.getData().get(orderFormDTO.getSeatType())==0){
+        Result<HashMap<Integer, Integer>> seatMapResult = trainClient.trainResidueTicket(orderFormDTO.getTrainId(), orderFormDTO.getStationIds());
+        if (seatMapResult.getData().get(orderFormDTO.getSeatType())<orderFormDTO.getSeatCodeOfUserId().size()){
             return Result.fail("200","无可用车票");
         }
         //2. 查询车票价格
-        Result<Double> doubleResult = trainClient.queryTrainTicketPrice(orderFormDTO.getStationIds());
+        Result<Double> doubleResult = trainClient.trainTicketPrice(orderFormDTO.getStationIds());
         Double price = doubleResult.getData();
         //3. 创建订单
         Order order = new Order();
@@ -61,6 +61,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         //5. TODO 延迟任务作支付状态变更保底
         // TODO 同步创建支付单
         // TODO 扣减对应座位余量 并将用户信息载入绑定座位
+//        trainClient.reservations(orderFormDTO.getStationIds(),orderFormDTO.getTrainId(),orderFormDTO.getSeatType(),orderFormDTO.getSeatCodeOfUserId());
         //创建订单成功 返回订单号
         return Result.success(order.getId());
     }

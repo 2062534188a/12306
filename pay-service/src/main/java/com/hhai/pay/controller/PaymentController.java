@@ -23,7 +23,7 @@ public class PaymentController {
 
     @ApiOperation("生成支付单")
     @PostMapping
-    public Result<String> applyPayOrder(@RequestParam String orderId,@RequestParam LocalDateTime expireTime){
+    public Result<String> payOrder(@RequestParam String orderId,@RequestParam LocalDateTime expireTime){
 //        return orderService.createOrder(orderFormDTO);
         return null;
     }
