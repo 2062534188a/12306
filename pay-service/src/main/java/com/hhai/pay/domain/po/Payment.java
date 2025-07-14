@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,7 +31,7 @@ public class Payment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "支付流水号")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     private String id;
 
     @ApiModelProperty(value = "关联订单号")
@@ -42,8 +43,11 @@ public class Payment implements Serializable {
     @ApiModelProperty(value = "状态(0支付中/1成功/2失败)")
     private Integer status;
 
-    @ApiModelProperty(value = "支付方式(支付宝/微信)")
-    private String payType;
+    @ApiModelProperty(value = "支付方式(余额/支付宝/微信)")
+    private Integer payType;
+
+    @ApiModelProperty(value = "截止时间")
+    private LocalDateTime expireTime;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
@@ -51,8 +55,6 @@ public class Payment implements Serializable {
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateTime;
 
-    @ApiModelProperty(value = "支付时间")
-    private LocalDateTime payTime;
 
 
 }

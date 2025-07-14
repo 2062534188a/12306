@@ -46,6 +46,11 @@
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-bootstrap</artifactId>
     </dependency>
+    <!--seata-->
+    <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+    </dependency>
     <!--OK http 的依赖 -->
     <dependency>
         <groupId>io.github.openfeign</groupId>
@@ -60,6 +65,11 @@
         <groupId>com.hhai</groupId>
         <artifactId>12306-api</artifactId>
         <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <!--消息发送-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
 </dependencies>
 </project>

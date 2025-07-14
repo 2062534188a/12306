@@ -1,6 +1,7 @@
 package com.hhai.user.controller;
 
 
+import com.hhai.common.utils.Result;
 import com.hhai.user.domain.dto.LoginFormDTO;
 import com.hhai.user.domain.vo.UserLoginVO;
 import com.hhai.user.service.IUserService;
@@ -11,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @Api(tags = "用户相关接口")
 @RestController
@@ -25,6 +28,13 @@ public class UserController {
     public UserLoginVO login(@RequestBody @Validated LoginFormDTO loginFormDTO){
         return userService.login(loginFormDTO);
     }
+
+    @ApiOperation("扣减余额")
+    @PostMapping("userBalance")
+    public Boolean userBalance(@RequestParam Long userId, @RequestParam BigDecimal balance){
+        return userService.deductUserBalance(userId,balance);
+    }
+
 //
 //    @ApiOperation("扣减余额")
 //    @ApiImplicitParams({

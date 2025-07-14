@@ -41,6 +41,9 @@ public class TrainSeatInformation implements Serializable {
     @ApiModelProperty(value = "用户ID")
     private Long userId;
 
+    @ApiModelProperty(value = "关联订单ID")
+    private String orderId ;
+
     @ApiModelProperty(value = "关联车次ID")
     private Long trainId;
 
@@ -52,6 +55,9 @@ public class TrainSeatInformation implements Serializable {
 
     @ApiModelProperty(value = "排号")
     private Integer rowNo;
+
+    @ApiModelProperty(value = "座位状态(锁定 0/未锁定 1)")
+    private Integer seatStatus;
 
     @ApiModelProperty(value = "座位字母")
     private String seatCode;

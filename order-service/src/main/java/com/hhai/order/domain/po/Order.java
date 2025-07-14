@@ -33,6 +33,9 @@ public class Order implements Serializable {
     @TableId(value = "id",type = IdType.INPUT)
     private String id;
 
+    @ApiModelProperty(value = "支付流水号")
+    private String paymentId;
+
     @ApiModelProperty(value = "用户ID")
     private Long userId;
 

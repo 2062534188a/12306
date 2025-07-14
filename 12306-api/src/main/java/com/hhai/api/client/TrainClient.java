@@ -1,9 +1,11 @@
 package com.hhai.api.client;
 
+import com.hhai.api.dto.ReservationTicketDTO;
 import com.hhai.common.utils.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
@@ -20,5 +22,8 @@ public interface TrainClient {
     Result<HashMap<Integer, Integer>> trainResidueTicket(@RequestParam("trainId") Long trainId, @RequestParam("branchStationId") List<Long> branchStationId);
 
     @PostMapping("/trainSeat/reservations")
-     Result<HashMap<Integer, Integer>> reservations(@RequestParam List<Long> stationIds,@RequestParam Long trainId,@RequestParam Integer seatType,@RequestParam List<Map<String,Object>> seatCodeOfUserId);
+    Result<HashMap<Integer, Integer>> reservations(@RequestBody ReservationTicketDTO reservationTicketDTO);
+
+    @PostMapping("/trainSeat/cancelSeatReservation")
+    void cancelSeatReservation(@RequestParam String orderId);
 }

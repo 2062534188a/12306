@@ -1,0 +1,5 @@
+hm:
+  db:
+    database: payment_db
+    host: 115.190.110.122 # 修改为你自己的虚拟机IP地址
+    pw: 200452 # 修改为docker中的MySQL密码

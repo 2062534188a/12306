@@ -52,10 +52,12 @@ CREATE TABLE `train_seat_information` (
       `branch_station_id` BIGINT  COMMENT '分站点ID',
       `seat_id` BIGINT  COMMENT '关联席别ID',
       `user_id` BIGINT NOT NULL COMMENT '用户ID',
+      `order_id` VARCHAR(30) NOT NULL COMMENT '关联订单号',
       `train_id` BIGINT NOT NULL COMMENT '关联车次ID',
       `seat_type` INT  COMMENT '席别(特等座(商务座) 0/一等座 1/二等座 2/无座3)',
       `carriage_no` INT COMMENT '车厢号(商务座1车10个座位/一等座2-3车80个座位) ',
       `row_no` INT NOT NULL COMMENT '排号',
+      `seat_status` TINYINT DEFAULT 0 NOT NULL COMMENT '座位状态(锁定 0/未锁定 1)',
       `seat_code` NVARCHAR(1) NOT NULL COMMENT '座位字母',
       `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -63,6 +65,21 @@ CREATE TABLE `train_seat_information` (
       INDEX `idx_train_id` (`train_id`),
       INDEX `idx_seat_id` (`seat_id`)
 );
+
+CREATE TABLE IF NOT EXISTS `undo_log`
+(
+    `branch_id`     BIGINT       NOT NULL COMMENT 'branch transaction id',
+    `xid`           VARCHAR(128) NOT NULL COMMENT 'global transaction id',
+    `context`       VARCHAR(128) NOT NULL COMMENT 'undo_log context,such as serialization',
+    `rollback_info` LONGBLOB     NOT NULL COMMENT 'rollback info',
+    `log_status`    INT(11)      NOT NULL COMMENT '0:normal status,1:defense status',
+    `log_created`   DATETIME(6)  NOT NULL COMMENT 'create datetime',
+    `log_modified`  DATETIME(6)  NOT NULL COMMENT 'modify datetime',
+    UNIQUE KEY `ux_undo_log` (`xid`, `branch_id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8mb4 COMMENT ='AT transaction mode undo table';
+
 
 -- 1. 先清空表（如果已有数据）
 TRUNCATE TABLE `train_station`;
@@ -145,14 +162,14 @@ INSERT INTO `train_seat` (`branch_station_id`,`train_id`, `seat_type`, `total_co
 (1,@train_id, 1, 100, 100),
 (1,@train_id, 2, 300, 300),
 (1,@train_id, 3, 50, 50),
-(10,@train_id, 0, 20, 20),
-(10,@train_id, 1, 100, 100),
-(10,@train_id, 2, 300, 300),
-(10,@train_id, 3, 50, 50),
-(9,@train_id, 0, 20, 20),
-(9,@train_id, 1, 100, 100),
-(9,@train_id, 2, 300, 300),
-(9,@train_id, 3, 50, 50),
+(3,@train_id, 0, 20, 20),
+(3,@train_id, 1, 100, 100),
+(3,@train_id, 2, 300, 300),
+(3,@train_id, 3, 50, 50),
+(2,@train_id, 0, 20, 20),
+(2,@train_id, 1, 100, 100),
+(2,@train_id, 2, 300, 300),
+(2,@train_id, 3, 50, 50),
 (4,@train_id, 0, 20, 20),
 (4,@train_id, 1, 100, 100),
 (4,@train_id, 2, 300, 300),

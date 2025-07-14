@@ -1,5 +1,6 @@
 package com.hhai.user.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.hhai.common.exception.BadRequestException;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -62,6 +65,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         vo.setUsername(user.getUsername());
         vo.setToken(token);
         return vo;
+    }
+
+    @Override
+    public Boolean deductUserBalance(Long userId, BigDecimal balance) {
+        return update(null,
+                new LambdaUpdateWrapper<User>()
+                        .eq(User::getId, userId)
+                        .ge(User::getBalance, balance)  // 余额 >= 扣减金额
+                        .setSql("balance = balance - " + balance) // 直接扣减
+        );
     }
 
 //    @Override

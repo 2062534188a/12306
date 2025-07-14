@@ -1,6 +1,7 @@
 package com.hhai.train.controller;
 
 import com.hhai.common.utils.Result;
+import com.hhai.train.domain.dto.ReservationTicketDTO;
 import com.hhai.train.domain.dto.TrainTicketDTO;
 import com.hhai.train.domain.vo.TrainTicketVO;
 import com.hhai.train.service.ITrainSeatService;
@@ -26,9 +27,14 @@ public class TrainSeatController {
     public Result<HashMap<Integer, Integer>> trainResidueTicket(@RequestParam("trainId") Long trainId, @RequestParam("branchStationId") List<Long> branchStationId){
         return trainSeatService.queryTrainResidueTicket(trainId,branchStationId);
     }
-    @ApiOperation("订票")
+    @ApiOperation("预定座位")
     @PostMapping("reservations")
-    public Result<HashMap<Integer, Integer>> reservations(@RequestParam List<Long> stationIds,@RequestParam Long trainId,@RequestParam Integer seatType,@RequestParam List<Map<String,Object>> seatCodeOfUserId){
-        return trainSeatService.reservationSeat(stationIds,trainId,seatType, seatCodeOfUserId);
+    public Result<HashMap<Integer, Integer>> reservations(@RequestBody ReservationTicketDTO reservationTicketDTO){
+        return trainSeatService.reservationSeat(reservationTicketDTO);
+    }
+
+    @PostMapping("cancelSeatReservation")
+    void cancelSeatReservation(@RequestParam String orderId){
+        trainSeatService.cancelSeatReservation(orderId);
     }
 }

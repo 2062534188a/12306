@@ -1,5 +1,6 @@
 package com.hhai.order.domain.dto;
 
+import com.hhai.api.dto.ReservationTicketDTO;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -31,11 +32,16 @@ public class OrderFormDTO {
     //座位类型
     private Integer seatType;
 
-    //用户id和对应座位字母
-    private List<Map<String,Object>> seatCodeOfUserId;
 
     //途径站点id
     private List<Long> stationIds;
 
+    //用户id和对应座位字母
+    private List<ReservationTicketDTO.seatCodeOfUserId> seatCodeOfUserId;
 
+    @Data
+    public static class seatCodeOfUserId {
+        private String seatCode;
+        private Long userId;
+    }
 }
