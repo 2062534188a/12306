@@ -22,7 +22,7 @@ public interface TrainClient {
     Result<HashMap<Integer, Integer>> trainResidueTicket(@RequestParam("trainId") Long trainId, @RequestParam("branchStationId") List<Long> branchStationId);
 
     @PostMapping("/trainSeat/reservations")
-    Result<HashMap<Integer, Integer>> reservations(@RequestBody ReservationTicketDTO reservationTicketDTO);
+    Result<List<String>> reservations(@RequestBody ReservationTicketDTO reservationTicketDTO);
 
     @PostMapping("/trainSeat/cancelSeatReservation")
     void cancelSeatReservation(@RequestParam String orderId);

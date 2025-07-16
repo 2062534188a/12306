@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -46,8 +47,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         Double price = doubleResult.getData();
         //3. 创建订单
         Order order = new Order();
-        // 生成分布式ID（假设是雪花ID）
-        long distId = IdUtil.getSnowflake().nextId();
 
         // 组合成带时间的ID：时间戳 + 分布式ID
         String idWithTime = DateUtil.format(DateUtil.date(), "yyyyMMdd") + "_" + RandomUtil.randomNumbers(8);
@@ -70,7 +69,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         reservationTicketDTO.setSeatType(orderFormDTO.getSeatType());
         reservationTicketDTO.setSeatCodeOfUserId(orderFormDTO.getSeatCodeOfUserId());
         reservationTicketDTO.setOrderId(order.getId());
-        trainClient.reservations(reservationTicketDTO);
+        Result<List<String>> reservations = trainClient.reservations(reservationTicketDTO);
         try {
             save(order);
         } catch (Exception e) {

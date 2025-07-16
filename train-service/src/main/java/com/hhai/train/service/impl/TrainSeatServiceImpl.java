@@ -4,15 +4,20 @@ package com.hhai.train.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hhai.api.client.TicketClient;
+import com.hhai.api.po.Ticket;
 import com.hhai.common.utils.Result;
 import com.hhai.train.domain.dto.ReservationTicketDTO;
 import com.hhai.train.domain.po.Train;
 import com.hhai.train.domain.po.TrainSeat;
 import com.hhai.train.domain.po.TrainSeatInformation;
+import com.hhai.train.domain.po.TrainStation;
 import com.hhai.train.mapper.TrainMapper;
 import com.hhai.train.mapper.TrainSeatMapper;
 import com.hhai.train.service.ITrainSeatService;
 import com.hhai.train.service.ITrainService;
+import com.hhai.train.service.ITrainStationService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +35,8 @@ import java.util.stream.Collectors;
 public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat> implements ITrainSeatService {
 
     private final TrainSeatInformationServiceImpl trainSeatInformationService;
+    private final TrainStationServiceImpl trainStationService;
+    private final TicketClient ticketClient;
 
     @Override
     public Result<HashMap<Integer, Integer>> queryTrainResidueTicket(Long trainId, List<Long> branchStationId) {
@@ -44,9 +51,9 @@ public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat
 
         return Result.success(SeatMap);
     }
-
+    @GlobalTransactional
     @Override
-    public Result<HashMap<Integer, Integer>> reservationSeat(ReservationTicketDTO reservationTicketDTO) {
+    public Result<List<String>> reservationSeat(ReservationTicketDTO reservationTicketDTO) {
         //扣减对应站点的余票
         // 1. 查询符合条件的ID列表
         List<TrainSeat> trainSeatList = lambdaQuery()
@@ -68,7 +75,13 @@ public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat
         TrainSeatInformation trainSeatInformation;
         long userId;
         String seatCode;
+        List<String> ticketIds =new ArrayList<>();
         Long seatId = trainSeatList.get(0).getId();
+        //查询途径站点信息
+        ArrayList<Long> stations = new ArrayList<>();
+        stations.add(reservationTicketDTO.getStationIds().get(0));
+        stations.add(reservationTicketDTO.getStationIds().get(reservationTicketDTO.getStationIds().size()-1));
+        List<TrainStation> trainStations = trainStationService.lambdaQuery().in(TrainStation::getId, stations).orderByAsc(TrainStation::getStationOrder).list();
         for (ReservationTicketDTO.seatCodeOfUserId userInfo : reservationTicketDTO.getSeatCodeOfUserId()) {
             userId =userInfo.getUserId();
             seatCode = userInfo.getSeatCode();
@@ -176,17 +189,41 @@ public class TrainSeatServiceImpl extends ServiceImpl<TrainSeatMapper, TrainSeat
 
                 seatInformationList.add(trainSeatInformation);
             }
-            //配置完一个行车人信息就保存一次
+
+            //保存车票信息
+            Ticket ticket = new Ticket();
+            ticket.setPassengerId(userId);
+            ticket.setSeatCode(seatCode);
+            ticket.setSeatType(reservationTicketDTO.getSeatType());
+            ticket.setRowNo(rowNo);
+            ticket.setCarriageNo(carriageNo);
+            ticket.setOrderId(reservationTicketDTO.getOrderId());
+            ticket.setTrainId(reservationTicketDTO.getTrainId());
+            //出发站点信息
+            ticket.setStartStationId( trainStations.get(0).getStationId());
+            ticket.setStartStation(trainStations.get(0).getStationName());
+            ticket.setDepartureTime(trainStations.get(0).getDepartureTime());
+            //目的站点信息
+            ticket.setEndStationId(trainStations.get(1).getStationId());
+            ticket.setEndStation(trainStations.get(1).getStationName());
+            ticket.setArrivalTime(trainStations.get(1).getDepartureTime());
+
             try {
+                //配置完一个行车人信息就保存一次
                 trainSeatInformationService.saveBatch(seatInformationList);
+                //清空保存的乘车信息
+                seatInformationList.clear();
+                //创建车票
+                ticketIds.add(ticketClient.ticket(ticket));
+
             } catch (Exception e) {
                 throw new RuntimeException("预定座位失败",e);
             }
         }
 
-        return null;
+        return Result.success(ticketIds);
     }
-
+    @GlobalTransactional
     @Override
     public void cancelSeatReservation(String orderId) {
         //先解除已锁定的座位

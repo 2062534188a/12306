@@ -1,8 +1,7 @@
 package com.hhai.ticket.mapper;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.hhai.ticket.domain.po.Ticket;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.hhai.ticket.domain.po.Ticket;
 
 /**
  * <p>

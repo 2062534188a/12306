@@ -29,7 +29,7 @@ public class TrainSeatController {
     }
     @ApiOperation("预定座位")
     @PostMapping("reservations")
-    public Result<HashMap<Integer, Integer>> reservations(@RequestBody ReservationTicketDTO reservationTicketDTO){
+    public Result<List<String>> reservations(@RequestBody ReservationTicketDTO reservationTicketDTO){
         return trainSeatService.reservationSeat(reservationTicketDTO);
     }
 

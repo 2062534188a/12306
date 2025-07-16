@@ -13,7 +13,7 @@ import java.util.Map;
 public interface ITrainSeatService {
     Result<HashMap<Integer, Integer>> queryTrainResidueTicket(Long trainId, List<Long> branchStationId);
 
-    Result<HashMap<Integer, Integer>> reservationSeat(ReservationTicketDTO reservationTicketDTO);
+    Result<List<String>> reservationSeat(ReservationTicketDTO reservationTicketDTO);
 
     void cancelSeatReservation(String orderId);
 }

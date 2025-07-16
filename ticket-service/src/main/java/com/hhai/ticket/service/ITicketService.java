@@ -1,7 +1,7 @@
 package com.hhai.ticket.service;
 
-import com.hhai.ticket.domain.po.Ticket;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.hhai.ticket.domain.po.Ticket;
 
 /**
  * <p>
@@ -12,5 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2025-07-06
  */
 public interface ITicketService extends IService<Ticket> {
+    String createTicket(Ticket ticket);
 
+    Boolean modifyTicketStatus(String ticketId);
 }
